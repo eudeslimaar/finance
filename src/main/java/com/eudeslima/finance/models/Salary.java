@@ -3,7 +3,8 @@ package com.eudeslima.finance.models;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.YearMonth;
+import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "salaries")
@@ -17,7 +18,7 @@ public class Salary {
     private BigDecimal salaryAmount;
 
     @Column(nullable = false)
-    private YearMonth month;
+    private LocalDate month;
 
     public BigDecimal getSalaryAmount() {
         return salaryAmount;
@@ -27,11 +28,11 @@ public class Salary {
         this.salaryAmount = salaryAmount;
     }
 
-    public YearMonth getMonth() {
+    public LocalDate getMonth() {
         return month;
     }
 
-    public void setMonth(YearMonth month) {
+    public void setMonth(LocalDate month) {
         this.month = month;
     }
 }
