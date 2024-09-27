@@ -20,6 +20,9 @@ public class ExpenseService {
     }
 
     public Expense saveExpense(Expense expense) {
+        if (expense.getInstallments().isEmpty()) {
+            expense.generateEqualInstallments();
+        }
         return expenseRepository.save(expense);
     }
 
@@ -36,8 +39,9 @@ public class ExpenseService {
             expense.setDescription(updatedExpense.getDescription());
             expense.setTotalValue(updatedExpense.getTotalValue());
             expense.setNumberOfInstallments(updatedExpense.getNumberOfInstallments());
-            expense.setInstallmentValue(updatedExpense.getInstallmentValue());
+            expense.setInstallments(updatedExpense.getInstallments()); // Atualizar a lista de parcelas
             expense.setStartDate(updatedExpense.getStartDate());
+            expense.setActive(updatedExpense.isActive());
             return ResponseEntity.ok(expenseRepository.save(expense));
         }
         return ResponseEntity.notFound().build();

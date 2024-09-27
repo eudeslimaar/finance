@@ -3,7 +3,10 @@ package com.eudeslima.finance.models;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -15,29 +18,55 @@ public class Expense {
     private Long id;
 
     @Column(nullable = false)
-    private String name; // Nome do produto ou serviço
+    private String name;
 
-    private String description; // Descrição opcional
-
-    @Column(nullable = false)
-    private BigDecimal totalValue; // Valor total da despesa
+    private String description;
 
     @Column(nullable = false)
-    private int numberOfInstallments; // Número de parcelas
+    private BigDecimal totalValue;
 
     @Column(nullable = false)
-    private BigDecimal installmentValue; // Valor de cada parcela
+    private int numberOfInstallments;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "expense_id")
+    private List<Installment> installments = new ArrayList<>();
 
     @Column(nullable = false)
-    private LocalDate startDate; // Data de início do parcelamento
+    private LocalDate startDate;
 
-    public Long getId() {
-        return id;
+    @Column(nullable = false)
+    private boolean active = true;
+
+    public Expense() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Expense(String name, String description, BigDecimal totalValue, int numberOfInstallments, LocalDate startDate, boolean equalInstallments) {
+
+        this.name = name;
+        this.description = description;
+        this.totalValue = totalValue;
+        this.numberOfInstallments = numberOfInstallments;
+        this.startDate = startDate;
+
+        if (equalInstallments) {
+            generateEqualInstallments();
+        }
     }
+
+    public void generateEqualInstallments() {
+        if (startDate == null) {
+            throw new IllegalArgumentException("A data de início não pode ser nula.");
+        }
+        BigDecimal installmentValue = totalValue.divide(new BigDecimal(numberOfInstallments), 2, RoundingMode.HALF_UP);
+
+        for (int i = 0; i < numberOfInstallments; i++) {
+            LocalDate dueDate = startDate.plusMonths(i); // Gera a data de vencimento para cada parcela
+            Installment installment = new Installment(installmentValue, dueDate);
+            installments.add(installment);
+        }
+    }
+
 
     public String getName() {
         return name;
@@ -69,14 +98,17 @@ public class Expense {
 
     public void setNumberOfInstallments(int numberOfInstallments) {
         this.numberOfInstallments = numberOfInstallments;
+        if (this.startDate != null && this.totalValue != null && this.numberOfInstallments > 0) {
+            generateEqualInstallments();
+        }
     }
 
-    public BigDecimal getInstallmentValue() {
-        return installmentValue;
+    public List<Installment> getInstallments() {
+        return installments;
     }
 
-    public void setInstallmentValue(BigDecimal installmentValue) {
-        this.installmentValue = installmentValue;
+    public void setInstallments(List<Installment> installments) {
+        this.installments = installments;
     }
 
     public LocalDate getStartDate() {
@@ -85,5 +117,16 @@ public class Expense {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+        if (this.startDate != null && this.totalValue != null && this.numberOfInstallments > 0) {
+            generateEqualInstallments();
+        }
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
