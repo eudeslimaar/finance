@@ -1,0 +1,92 @@
+GET http://localhost:8080/api/expenses
+Accept: application/json
+
+###
+
+
+GET http://localhost:8080/api/expenses/1
+Accept: application/json
+
+###
+
+
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Compra de Notebook",
+  "description": "Notebook para trabalho",
+  "totalValue": 3000.00,
+  "numberOfInstallments": 10,
+  "startDate": "2024-07-01",
+  "active": true
+}
+
+###
+
+
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Compra de TV",
+  "description": "Televisão 4K",
+  "totalValue": 2500.00,
+  "numberOfInstallments": 5,
+  "startDate": "2024-08-01",
+  "active": true,
+  "installments": [
+    {
+      "value": 500.00,
+      "dueDate": "2024-08-01"
+    },
+    {
+      "value": 500.00,
+      "dueDate": "2024-09-01"
+    },
+    {
+      "value": 500.00,
+      "dueDate": "2024-10-01"
+    },
+    {
+      "value": 500.00,
+      "dueDate": "2024-11-01"
+    },
+    {
+      "value": 500.00,
+      "dueDate": "2024-12-01"
+    }
+  ]
+}
+
+###
+
+PUT http://localhost:8080/api/expenses/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Compra de Notebook Atualizado",
+  "description": "Notebook para trabalho - atualizado",
+  "totalValue": 3500.00,
+  "numberOfInstallments": 10,
+  "startDate": "2024-07-01",
+  "active": true,
+  "installments": [
+    {
+      "value": 350.00,
+      "dueDate": "2024-07-01"
+    },
+    {
+      "value": 350.00,
+      "dueDate": "2024-08-01"
+    }
+  ]
+}
+
+###
+
+DELETE http://localhost:8080/api/expenses/1
+Accept: application/json
